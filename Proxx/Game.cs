@@ -18,22 +18,37 @@
         // we update a Cell as open and recursively update all adjacent Cells that have zero adjacent black holes.
         public void UpdateVisibleCells(int row, int col)
         {
-            if (!_board[row, col].isOpen)
+            if (_board[row, col].isBlackHole)
             {
-                _board[row, col].isOpen = true;
-                if (_board[row, col].adjacentBlackHoles == 0)
+                Console.WriteLine("Game is over");
+            }
+
+            _board[row, col].isOpen = true;
+            if (_board[row, col].adjacentBlackHoles == 0)
+            {
+                for (int i = row - 1; i <= row + 1; i++)
                 {
-                    for (int i = row - 1; i <= row + 1; i++)
+                    for (int j = col - 1; j <= col + 1; j++)
                     {
-                        for (int j = col - 1; j <= col + 1; j++)
+                        if (i >= 0 && i < _size && j >= 0 && j < _size)
                         {
-                            if (i >= 0 && i < _size && j >= 0 && j < _size)
-                            {
-                                UpdateVisibleCells(i, j);
-                            }
+                            UpdateVisibleCells(i, j);
                         }
                     }
                 }
+            }
+            var openCount = 0;
+            foreach (var item in _board)
+            {
+                if (item.isOpen)
+                {
+                    openCount++;
+                }
+            }
+
+            if (_blackHoles + openCount == _board.Length)
+            {
+                Console.WriteLine("You are win");
             }
         }
 
@@ -83,11 +98,11 @@
             var rand = new Random();
             while (placedBlackHoles < _blackHoles)
             {
-                var row = rand.Next(_size);
-                var col = rand.Next(_size);
-                if (!_board[row, col].isBlackHole)
+                var i = rand.Next(0, _size);
+                var j = rand.Next(0, _size);
+                if (!_board[i, j].isBlackHole)
                 {
-                    _board[row, col].isBlackHole = true;
+                    _board[i, j].isBlackHole = true;
                     placedBlackHoles++;
                 }
             }
